@@ -1,4 +1,4 @@
-name: FastAPI CI/CD
+name: FastAPI CI/CD (Windows)
 
 on:
   push:
@@ -24,31 +24,37 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      # 🔹 Set image tag using commit SHA
+      # 🔹 Set image tag using commit SHA (PowerShell way)
       - name: Set Image Tag
-        id: vars
-        run: echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+        shell: powershell
+        run: |
+          $tag = $env:GITHUB_SHA.Substring(0,7)
+          echo "TAG=$tag" >> $env:GITHUB_ENV
 
       # 🔹 Build Docker image
       - name: Build Image
-        run: docker build -t $IMAGE_NAME:$TAG .
+        shell: powershell
+        run: docker build -t ${env:IMAGE_NAME}:${env:TAG} .
 
       # 🔹 Push Docker image
       - name: Push Image
-        run: docker push $IMAGE_NAME:$TAG
+        shell: powershell
+        run: docker push ${env:IMAGE_NAME}:${env:TAG}
 
       # 🔹 Setup kubectl
       - name: Setup kubectl
         uses: azure/setup-kubectl@v3
 
-      # 🔹 Configure kubeconfig securely
+      # 🔹 Configure kubeconfig
       - name: Configure kubeconfig
+        shell: powershell
         run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          New-Item -ItemType Directory -Force -Path $HOME\.kube
+          $env:KUBECONFIG | Out-File -FilePath $HOME\.kube\config -Encoding ascii
 
-      # 🔹 Update deployment image (dynamic)
+      # 🔹 Deploy to Kubernetes
       - name: Deploy to Kubernetes
+        shell: powershell
         run: |
-          kubectl set image deployment/fastapi-deployment fastapi-container=$IMAGE_NAME:$TAG
+          kubectl set image deployment/fastapi-deployment fastapi-container=${env:IMAGE_NAME}:${env:TAG}
           kubectl rollout status deployment/fastapi-deployment
