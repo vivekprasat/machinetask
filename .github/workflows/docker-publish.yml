@@ -6,8 +6,8 @@ on:
       - main
 
 env:
-  IMAGE_NAME: your-dockerhub-username/fastapi-api
-
+  IMAGE_NAME:  ${{ secrets.DOCKERHUB_PASSWORD }}/fastapi-api
+  
 jobs:
   build-deploy:
     runs-on: self-hosted
