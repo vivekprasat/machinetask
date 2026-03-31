@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  IMAGE_NAME:  ${{ secrets.DOCKERHUB_PASSWORD }}/fastapi-api
+  IMAGE_NAME:  vivek342/fastapi-api
   
 jobs:
   build-deploy:
