@@ -26,7 +26,7 @@ jobs:
     #   run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
     - name: Build Image
-      run: docker build -t $IMAGE_NAME:latest .
+      run: docker buildx build --load -t $IMAGE_NAME:latest .
 
     - name: Push Image
       run: docker push $IMAGE_NAME
