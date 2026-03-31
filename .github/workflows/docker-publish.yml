@@ -6,38 +6,49 @@ on:
       - main
 
 env:
-  IMAGE_NAME:  vivek342/fastapi-api
-  
+  IMAGE_NAME: vivek342/fastapi-api
+
 jobs:
   build-deploy:
     runs-on: self-hosted
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-      
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      # 🔹 Checkout code
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    # - name: Docker Login
-    #   run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+      # 🔹 Login to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    - name: Build Image
-      run: docker buildx build --load -t $IMAGE_NAME:latest .
+      # 🔹 Set image tag using commit SHA
+      - name: Set Image Tag
+        id: vars
+        run: echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
-    - name: Push Image
-      run: docker push $IMAGE_NAME
+      # 🔹 Build Docker image
+      - name: Build Image
+        run: docker build -t $IMAGE_NAME:$TAG .
 
-    - name: Setup kubectl
-      uses: azure/setup-kubectl@v3
+      # 🔹 Push Docker image
+      - name: Push Image
+        run: docker push $IMAGE_NAME:$TAG
 
-    - name: Configure kubeconfig
-      run: echo "${{ secrets.KUBECONFIG }}" > kubeconfig
+      # 🔹 Setup kubectl
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
 
-    - name: Deploy
-      run: |
-        export KUBECONFIG=kubeconfig
-        kubectl apply -f k8s/
+      # 🔹 Configure kubeconfig securely
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+
+      # 🔹 Update deployment image (dynamic)
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl set image deployment/fastapi-deployment fastapi-container=$IMAGE_NAME:$TAG
+          kubectl rollout status deployment/fastapi-deployment
