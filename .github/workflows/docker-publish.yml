@@ -20,11 +20,17 @@ jobs:
       run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
     - name: Build Image
-      working-directory: task1 docker builds
+      working-directory: "task1 docker builds"
       run: docker build -t $IMAGE_NAME:latest .
-  
+
     - name: Push Image
       run: docker push $IMAGE_NAME:latest
+
+    # ✅ NEW STEP (Docker Compose)
+    - name: Run Docker Compose
+      working-directory: "task2 dockercompose"
+      run: |
+        docker compose up -d --build
 
     - name: Setup kubectl
       uses: azure/setup-kubectl@v3
@@ -41,11 +47,10 @@ jobs:
         kubectl get nodes
 
     - name: Deploy
-      working-directory: task3 kubernetes
+      working-directory: "task3 kubernetes"
       run: |
         kubectl apply -f secrets.yml
         kubectl apply -f config.yml
         kubectl apply -f hpa.yml
         kubectl apply -f deployments.yml
         kubectl apply -f LoadBalancer.yml
-        
