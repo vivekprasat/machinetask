@@ -29,7 +29,7 @@ jobs:
       uses: azure/setup-kubectl@v3
 
     - name: Configure kubeconfig
-      run: echo "${{ secrets.KUBECONFIG }}" > kubeconfig
+      run: echo "${{ secrets.KUBECONFIG_BASE64 }}" | base64 -d > kubeconfig
 
     - name: Deploy
       run: |
