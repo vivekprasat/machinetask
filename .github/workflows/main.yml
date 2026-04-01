@@ -1,0 +1,42 @@
+name: FastAPI CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: vivek342/fastapi-api
+
+jobs:
+  build-deploy:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Docker Login
+      run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+    - name: Build Image
+      working-directory: "task1 docker builds"
+      run: docker build -t $IMAGE_NAME:latest .
+
+    - name: Push Image
+      run: docker push $IMAGE_NAME:latest
+  docker-composer-deploy:
+     runs-on: self-hosted
+     steps:
+       - name: Run Docker Compose
+         working-directory: "task2 dockercompose"
+         run: |
+            docker compose up -d --build
+  kubernetes-deploy:
+     runs-on: self-hosted
+     steps:
+       - name: Setup kubectl
+         uses: azure/setup-kubectl@v3
+    
+      
+   
