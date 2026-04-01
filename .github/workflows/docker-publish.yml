@@ -26,7 +26,6 @@ jobs:
     - name: Push Image
       run: docker push $IMAGE_NAME:latest
 
-    # ✅ NEW STEP (Docker Compose)
     - name: Run Docker Compose
       working-directory: "task2 dockercompose"
       run: |
@@ -46,11 +45,27 @@ jobs:
         kubectl config current-context
         kubectl get nodes
 
-    - name: Deploy
+    - name: Secret Deployment
       working-directory: "task3 kubernetes"
       run: |
         kubectl apply -f secrets.yml
+
+    - name: Config Deployment
+      working-directory: "task3 kubernetes"
+      run: |
         kubectl apply -f config.yml
-        kubectl apply -f hpa.yml
+
+    - name: App Deployment
+      working-directory: "task3 kubernetes"
+      run: |
         kubectl apply -f deployments.yml
+
+    - name: Horizontal Pod Autoscaler
+      working-directory: "task3 kubernetes"
+      run: |
+        kubectl apply -f hpa.yml
+
+    - name: Load Balancer Deployment
+      working-directory: "task3 kubernetes"
+      run: |
         kubectl apply -f LoadBalancer.yml
