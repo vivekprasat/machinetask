@@ -41,4 +41,5 @@ jobs:
 
     - name: Deploy
       run: |
-        kubectl apply -f k8s/
+        kubectl apply -f deployments.yml
+        kubectl apply -f LoadBalancer.yml
