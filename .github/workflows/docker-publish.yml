@@ -41,6 +41,7 @@ jobs:
         kubectl get nodes
 
     - name: Deploy
+      working-directory: task3 kubernetes
       run: |
-        kubectl apply -f task3 kubernetes/deployments.yml
-        kubectl apply -f task3 kubernetes/LoadBalancer.yml
+        kubectl apply -f deployments.yml
+        kubectl apply -f LoadBalancer.yml
