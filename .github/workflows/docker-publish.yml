@@ -29,9 +29,16 @@ jobs:
       uses: azure/setup-kubectl@v3
 
     - name: Configure kubeconfig
-      run: echo "${{ secrets.KUBECONFIG_BASE64 }}" | base64 -d > kubeconfig
+      run: |
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.KUBECONFIG_BASE64 }}" | base64 --decode > $HOME/.kube/config
+        export KUBECONFIG=$HOME/.kube/config
+
+    - name: Verify Cluster
+      run: |
+        kubectl config current-context
+        kubectl get nodes
 
     - name: Deploy
       run: |
-        export KUBECONFIG=kubeconfig
         kubectl apply -f k8s/
