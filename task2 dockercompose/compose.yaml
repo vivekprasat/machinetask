@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   api:
-    build: .
+    image: vivek342/fastapi-api:latest   # ✅ FIX
     container_name: fastapi-api
     ports:
       - "8000:8000"
