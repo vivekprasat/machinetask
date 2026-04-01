@@ -59,7 +59,7 @@ jobs:
        - name: Application Deployment
          working-directory: "task3 kubernetes"
          run: |
-            kubectl apply -f deployment.yml
+            kubectl apply -f deployments.yml
        - name: Horizontal Pod Autoscaler
          working-directory: "task3 kubernetes"
          run: |
