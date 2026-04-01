@@ -20,7 +20,7 @@ jobs:
       run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
     - name: Build Image
-      run: docker build -t $IMAGE_NAME:latest .
+      run: docker build  -t $IMAGE_NAME:latest .
 
     - name: Push Image
       run: docker push $IMAGE_NAME:latest
@@ -41,5 +41,5 @@ jobs:
 
     - name: Deploy
       run: |
-        kubectl apply -f deployments.yml
-        kubectl apply -f LoadBalancer.yml
+        kubectl apply -f task3 kubernetes/deployments.yml
+        kubectl apply -f task3 kubernetes/LoadBalancer.yml
