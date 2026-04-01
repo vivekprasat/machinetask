@@ -43,5 +43,9 @@ jobs:
     - name: Deploy
       working-directory: task3 kubernetes
       run: |
+        kubectl apply -f secrets.yml
+        kubectl apply -f config.yml
+        kubectl apply -f hpa.yml
         kubectl apply -f deployments.yml
         kubectl apply -f LoadBalancer.yml
+        
