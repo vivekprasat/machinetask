@@ -51,3 +51,6 @@ spec:
       volumes:
         - name: viveknew
           emptyDir: {}
+        image: redis:7
+        ports:
+          - containerPort: 6379
