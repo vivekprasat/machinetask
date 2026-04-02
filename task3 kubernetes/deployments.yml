@@ -14,32 +14,40 @@ spec:
     spec:
       containers:
       - name: fastapi-api
-        image: your-dockerhub-username/fastapi-api:latest
+        image: vivek342/fastapi-api:latest
         ports:
-        - containerPort: 8000
-
+          - containerPort: 8000
         envFrom:
-        - configMapRef:
-            name: fastapi-config
-        - secretRef:
-            name: fastapi-secret
-
+          - configMapRef:
+              name: fastapi-config
+          - secretRef:
+              name: fastapi-secret
         livenessProbe:
           httpGet:
             path: /health
             port: 8000
           initialDelaySeconds: 5
           periodSeconds: 10
-
         readinessProbe:
           httpGet:
             path: /health
             port: 8000
           initialDelaySeconds: 5
           periodSeconds: 10
-
         resources:
           requests:
             cpu: "100m"
           limits:
             cpu: "500m"
+
+      - name: redis
+        image: redis:7
+        ports:
+          - containerPort: 6379
+        volumeMounts:
+          - name: viveknew
+            mountPath: /data
+
+      volumes:
+        - name: viveknew
+          emptyDir: {}
