@@ -36,8 +36,8 @@ jobs:
             docker compose up -d --build
   kubernetes-deploy:
      runs-on: self-hosted
-     needs: build-deploy
      needs: docker-composer-deploy
+     
      steps:
        - name: Setup kubectl
          uses: azure/setup-kubectl@v3
