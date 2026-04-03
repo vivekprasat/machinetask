@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: fastapi-config
 data:
-  REDIS_HOST: redis
+  REDIS_HOST: localhost
